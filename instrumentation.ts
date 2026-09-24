@@ -5,9 +5,8 @@
  * crashes the process on boot, named, instead of surfacing later as a
  * confusing failure on someone's first prompt.
  *
- * `onRequestError` is the only place the real server error exists. The
- * browser gets React's redacted copy with no stack, so without this hook a
- * server render failure cannot be diagnosed from error tracking.
+ * `onRequestError` sends each server render, route, or action failure to
+ * PostHog error tracking, because the browser only sees a redacted copy.
  */
 import { type Instrumentation } from "next";
 

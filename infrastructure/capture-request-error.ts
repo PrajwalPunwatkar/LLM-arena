@@ -77,11 +77,7 @@ export const captureRequestError = async (
       digest: readDigest(error),
       path: request.path,
       method: request.method,
-      routerKind: context.routerKind,
-      routePath: context.routePath,
-      routeType: context.routeType,
-      renderSource: context.renderSource,
-      revalidateReason: context.revalidateReason,
+      ...context,
     });
   } catch (captureError) {
     console.error("[instrumentation] could not report a request error", captureError);
