@@ -1,10 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
-
 import { chatRequestSchema } from "@/features/chat/chat-request";
 import { guardChatRequest } from "@/features/chat/chat-protection";
 import { streamModelResponse } from "@/features/chat/stream-model-response";
 import { database } from "@/infrastructure/database";
-import { findAppUserId } from "@/infrastructure/current-user";
+import { findAppUserId, getClerkUserId } from "@/infrastructure/current-user";
 import { fetchFreeModelCatalog } from "@/infrastructure/fetch-model-catalog";
 
 /**
@@ -19,7 +17,7 @@ import { fetchFreeModelCatalog } from "@/infrastructure/fetch-model-catalog";
  * never costs an Arcjet decision.
  */
 export const POST = async (request: Request): Promise<Response> => {
-  const { userId } = await auth();
+  const userId = await getClerkUserId();
 
   if (!userId) {
     return Response.json(

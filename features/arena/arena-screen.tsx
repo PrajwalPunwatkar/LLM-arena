@@ -13,6 +13,7 @@ import { buildModelMessages } from "./model-messages";
 import { startTurn } from "./start-turn";
 import { streamModelAnswer } from "./stream-model-answer";
 import type { ResponseState, TurnState } from "./turn-state";
+import Markdown from "react-markdown";
 
 /**
  * The real arena: one prompt fanned out to every selected model, each
@@ -135,7 +136,9 @@ const ResponseColumn = ({
               them can genuinely open with the same words, so the position is
               the only key here that is actually unique. */}
           {response.text.split("\n\n").map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
+            <span key={index}>
+              <Markdown>{paragraph}</Markdown>
+            </span>
           ))}
         </div>
       )}

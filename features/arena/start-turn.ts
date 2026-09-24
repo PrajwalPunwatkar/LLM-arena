@@ -1,11 +1,9 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
-
 import { trackPromptSent } from "@/infrastructure/analytics-events";
 import { MAX_SELECTED_MODELS, MIN_SELECTED_MODELS } from "@/infrastructure/model-catalog";
 import { database } from "@/infrastructure/database";
-import { ensureAppUser } from "@/infrastructure/current-user";
+import { ensureAppUser, getClerkUserId } from "@/infrastructure/current-user";
 import { fetchFreeModelCatalog } from "@/infrastructure/fetch-model-catalog";
 
 /**
@@ -69,7 +67,7 @@ const refuse = (error: string): StartTurnResult =>
   Object.freeze({ ok: false as const, error });
 
 export const startTurn = async (input: StartTurnInput): Promise<StartTurnResult> => {
-  const { userId: clerkId } = await auth();
+  const clerkId = await getClerkUserId();
 
   if (!clerkId) {
     return refuse("Sign in to send a prompt to the arena.");

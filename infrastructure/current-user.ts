@@ -1,5 +1,7 @@
 import "server-only";
 
+import { auth as clerkAuth } from "@clerk/nextjs/server";
+
 import { database } from "./database";
 
 /**
@@ -13,6 +15,22 @@ import { database } from "./database";
  * is the one place this app needs one to exist. A webhook would be a second
  * endpoint and a secret to manage for a guarantee this already gets for free.
  */
+
+/** Returns the Clerk user id for the current request, or `null` when auth is unavailable. */
+export const getClerkUserId = async (): Promise<string | null> => {
+  try {
+    const { userId } = await clerkAuth();
+
+    return userId ?? null;
+  } catch (error) {
+    console.warn(
+      "[clerk] auth unavailable in this request context; treating as signed out",
+      error,
+    );
+
+    return null;
+  }
+};
 
 /** Finds or creates the app's own `users` row for a signed-in Clerk person. */
 export const ensureAppUser = async (clerkId: string): Promise<{ readonly id: string }> =>

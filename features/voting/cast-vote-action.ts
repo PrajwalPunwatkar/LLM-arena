@@ -1,9 +1,7 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
-
 import { trackVoteCast } from "@/infrastructure/analytics-events";
-import { findAppUserId } from "@/infrastructure/current-user";
+import { findAppUserId, getClerkUserId } from "@/infrastructure/current-user";
 
 import { castVote, type VoteRefusal } from "./cast-vote";
 
@@ -23,7 +21,7 @@ export const castVoteAction = async (input: {
   readonly turnId: string;
   readonly modelResponseId: string;
 }): Promise<CastVoteActionResult> => {
-  const { userId: clerkId } = await auth();
+  const clerkId = await getClerkUserId();
 
   if (!clerkId) {
     return { ok: false, error: "Sign in to vote." };

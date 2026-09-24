@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
 import type { ResponseState, TurnState } from "@/features/arena/turn-state";
@@ -7,7 +6,7 @@ import { guardThreadPage } from "@/features/threads/thread-protection";
 import { ThreadUnavailable } from "@/features/threads/thread-unavailable";
 import { castVoteAction } from "@/features/voting/cast-vote-action";
 import { database } from "@/infrastructure/database";
-import { findAppUserId } from "@/infrastructure/current-user";
+import { findAppUserId, getClerkUserId } from "@/infrastructure/current-user";
 import { fetchFreeModelCatalog } from "@/infrastructure/fetch-model-catalog";
 import { defaultModelSelection } from "@/infrastructure/model-catalog";
 
@@ -73,7 +72,7 @@ export default async function ThreadPage({
 
   if (!thread) notFound();
 
-  const { userId: clerkId } = await auth();
+  const clerkId = await getClerkUserId();
   const viewerId = clerkId ? await findAppUserId(clerkId) : null;
   const isOwner = viewerId !== null && viewerId === thread.userId;
 

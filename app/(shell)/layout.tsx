@@ -1,12 +1,10 @@
 import { Show, UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
-import { unstable_rethrow } from "next/navigation";
 
 import { AppShell } from "@/features/shell/app-shell";
 import { listThreadHistory } from "@/features/shell/thread-history";
 import { type ThreadGroup } from "@/features/shell/thread-groups";
 import { ThemeToggle } from "@/features/theme/theme-toggle";
-import { findAppUserId } from "@/infrastructure/current-user";
+import { findAppUserId, getClerkUserId } from "@/infrastructure/current-user";
 import { ThreadHistoryProvider } from "@/infrastructure/thread-history-store";
 
 /**
@@ -31,15 +29,14 @@ import { ThreadHistoryProvider } from "@/infrastructure/thread-history-store";
  */
 const loadThreadHistory = async (): Promise<readonly ThreadGroup[]> => {
   try {
-    const { userId: clerkId } = await auth();
+    const clerkId = await getClerkUserId();
     const appUserId = clerkId ? await findAppUserId(clerkId) : null;
 
     return appUserId ? await listThreadHistory(appUserId) : [];
   } catch (error) {
-    // Let Next's own control-flow signals through untouched — a `redirect()`
-    // or `notFound()` from Clerk, and the dynamic-rendering bail-out that marks
-    // this route dynamic at build time — and degrade only on a genuine failure.
-    unstable_rethrow(error);
+    // A sidebar history failure should not take the whole shell down. The route
+    // can still render with an empty history list and keep the picker and other
+    // screens usable.
     console.error("[shell] could not load the sidebar's thread history", error);
 
     return [];

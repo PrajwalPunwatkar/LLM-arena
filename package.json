@@ -19,7 +19,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@arcjet/next": "^1.9.1",
+    "@arcjet/next": "^1.10.0-rc.1",
     "@clerk/nextjs": "^7.6.4",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@posthog/ai": "^8.6.0",
@@ -35,6 +35,7 @@
     "radix-ui": "^1.6.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
