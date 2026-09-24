@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useEffect } from "react";
 
 /**
@@ -24,6 +25,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error("[app] the shell failed to render", error);
+    posthog.captureException(error, { digest: error.digest, boundary: "app" });
   }, [error]);
 
   return (
