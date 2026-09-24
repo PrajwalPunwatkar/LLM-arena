@@ -1,3 +1,5 @@
+import type { Instrumentation } from "next";
+
 /**
  * Runs once when the server starts.
  *
@@ -10,4 +12,21 @@ export const register = async (): Promise<void> => {
 
   const { serverEnv } = await import("./infrastructure/env");
   serverEnv();
+};
+
+/**
+ * Runs for every error the server catches while it renders a page, runs a
+ * route handler or a server action, or runs the proxy. Without this, a server
+ * failure only reaches PostHog as the browser's redacted placeholder with no
+ * stack, which cannot be debugged.
+ */
+export const onRequestError: Instrumentation.onRequestError = async (
+  error,
+  request,
+  context,
+) => {
+  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+
+  const { reportServerError } = await import("./infrastructure/report-server-error");
+  await reportServerError(error, request, context);
 };

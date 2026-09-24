@@ -1,5 +1,6 @@
 "use client";
 
+import posthog from "posthog-js";
 import { useEffect } from "react";
 
 /**
@@ -14,9 +15,10 @@ import { useEffect } from "react";
  * app reaches the framework's raw screen.
  *
  * A boundary must be a client component, and the real reason only exists here,
- * so it is logged from the client rather than lost. In production the message
- * is React's redacted placeholder and `digest` is the thread back to the
- * server log, which is why it is worth logging at all.
+ * so it is logged and sent to PostHog from the client rather than lost. In
+ * production the message is React's redacted placeholder and `digest` is the
+ * thread back to the server copy that `instrumentation.ts` reports, which is
+ * why it goes with the event.
  */
 export default function ShellError({
   error,
@@ -27,6 +29,7 @@ export default function ShellError({
 }) {
   useEffect(() => {
     console.error("[shell] a screen failed to render", error);
+    posthog.captureException(error, { digest: error.digest, boundary: "shell" });
   }, [error]);
 
   return (
